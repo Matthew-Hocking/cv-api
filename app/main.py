@@ -1,5 +1,9 @@
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
+from datetime import datetime
+
+from app.routes.cv_routes import router as cv_router
+from app.models.cv_models import HealthResponse
 
 # Create FastAPI instance
 app = FastAPI(
@@ -19,17 +23,40 @@ app.add_middleware(
     allow_headers=["*"],
 )
 
+# Include CV routes
+app.include_router(cv_router)
+
 # Basic health check endpoint
-@app.get("/health")
+@app.get("/health", response_model=HealthResponse)
 async def health_check():
-    return {"status": "healthy", "message": "CV Portfolio API is running"}
+    return HealthResponse(
+        status="healthy",
+        message="CV Portfolio API is running"
+    )
 
 @app.get("/")
 async def root():
     return {
         "message": "Welcome to my CV Portfolio API",
-        "docs": "/docs",
-        "health": "/health"
+        "description": "A serverless REST API showcasing professional information",
+        "version": "1.0.0",
+        "endpoints": {
+            "docs": "/docs",
+            "health": "/health",
+            "profile": "/api/v1/me",
+            "experience": "/api/v1/experience",
+            "education": "/api/v1/education",
+            "skills": "/api/v1/skills",
+            "projects": "/api/v1/projects",
+            "contact": "/api/v1/contact",
+            "summary": "/api/v1/summary"
+        },
+        "features": [
+            "JSON and XML response formats (use Accept header)",
+            "Comprehensive API documentation",
+            "Professional CV data endpoints",
+            "Serverless-ready architecture"
+        ]
     }
 
 # For local development
