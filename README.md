@@ -60,12 +60,12 @@ uvicorn app.main:app --reload
 **Public Endpoints:**
 - `GET /` - API information
 - `GET /health` - Health check
-- `GET /me` - Basic profile information *(Coming Soon)*
-- `GET /experience` - Work experience *(Coming Soon)*
-- `GET /education` - Education background *(Coming Soon)*
-- `GET /skills` - Technical and soft skills *(Coming Soon)*
-- `GET /projects` - Portfolio projects *(Coming Soon)*
-- `GET /contact` - Contact information *(Coming Soon)*
+- `GET /me` - Basic profile information
+- `GET /experience` - Work experience
+- `GET /education` - Education background
+- `GET /skills` - Technical and soft skills
+- `GET /projects` - Portfolio projects
+- `GET /contact` - Contact information
 
 **Admin Endpoints:** *(Coming Soon)*
 - `POST /admin/auth` - Admin authentication
@@ -109,8 +109,8 @@ cv-portfolio-api/
 
 - [x] Project setup and structure
 - [x] Basic FastAPI application
-- [ ] CV data models
-- [ ] API endpoints implementation
+- [x] CV data models
+- [x] API endpoints implementation
 - [ ] Database integration
 - [ ] Authentication system
 - [ ] AWS deployment
