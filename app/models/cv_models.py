@@ -1,4 +1,4 @@
-from datetime import date, datetime
+from datetime import date, datetime, timezone
 from typing import List, Optional, Dict, Any
 from pydantic import BaseModel, EmailStr, HttpUrl, Field
 from enum import Enum
@@ -22,7 +22,7 @@ class ContactMethod(str, Enum):
 # Base response model
 class BaseResponse(BaseModel):
     success: bool = True
-    timestamp: datetime = Field(default_factory=datetime.now())
+    timestamp: datetime = Field(default_factory=lambda: datetime.now(timezone.utc))
 
 
 # Profile/Personal Information
@@ -120,7 +120,7 @@ class ContactResponse(BaseResponse):
 class HealthResponse(BaseModel):
     status: str
     message: str
-    timestamp: datetime = Field(default_factory=datetime.utcnow)
+    timestamp: datetime = Field(default_factory=lambda: datetime.now(timezone.utc))
     version: str = "1.0.0"
 
 
@@ -129,7 +129,7 @@ class ErrorResponse(BaseModel):
     success: bool = False
     error: str
     detail: Optional[str] = None
-    timestamp: datetime = Field(default_factory=datetime.utcnow)
+    timestamp: datetime = Field(default_factory=lambda: datetime.now(timezone.utc))
 
 
 # Admin Models (for later)
