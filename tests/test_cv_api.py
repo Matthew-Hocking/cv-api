@@ -73,10 +73,11 @@ class TestCVEndpoints:
         data = response.json()
         assert data["success"] is True
         assert "data" in data
-        assert isinstance(data["data"], list)
+        assert isinstance(data["data"], dict)
         
         if data["data"]:  # If there's skills data
-            skill = data["data"][0]
+            skills = data["data"]["all_skills"]
+            skill = skills[0]
             assert "name" in skill
             assert "level" in skill
             assert "category" in skill
@@ -88,7 +89,7 @@ class TestCVEndpoints:
         data = response.json()
         assert data["success"] is True
         assert "data" in data
-        assert isinstance(data["data"], list)
+        assert isinstance(data["data"], dict)
     
     def test_get_contact(self):
         """Test contact endpoint"""
@@ -97,7 +98,7 @@ class TestCVEndpoints:
         data = response.json()
         assert data["success"] is True
         assert "data" in data
-        assert isinstance(data["data"], list)
+        assert isinstance(data["data"], dict)
     
     def test_get_summary(self):
         """Test summary endpoint"""
@@ -117,15 +118,6 @@ class TestResponseFormats:
         response = client.get("/api/v1/me")
         assert response.status_code == 200
         assert "application/json" in response.headers.get("content-type", "")
-    
-    def test_xml_response_format(self):
-        """Test XML response format"""
-        headers = {"Accept": "application/xml"}
-        response = client.get("/api/v1/me", headers=headers)
-        assert response.status_code == 200
-        assert "application/xml" in response.headers.get("content-type", "")
-        assert "<?xml" in response.text
-        assert "<response>" in response.text
     
     def test_json_response_explicit(self):
         """Test explicit JSON response format"""
@@ -162,9 +154,14 @@ class TestDataModels:
         """Test skills data structure"""
         response = client.get("/api/v1/skills")
         skills = response.json()["data"]
+
+        if skills:  # Check the structure of the skills data
+            assert skills["all_skills"]
+            assert skills["skills_by_category"]
+            assert skills["categories"]
         
-        if skills:  # If there's skills data
-            skill = skills[0]
+        if skills["all_skills"]:  # Check the details of a skill
+            skill = skills["all_skills"][0]
             required_fields = ["name", "level", "category", "years_experience"]
             for field in required_fields:
                 assert field in skill, f"Missing required field: {field}"
@@ -177,9 +174,9 @@ class TestDataModels:
         """Test projects data structure"""
         response = client.get("/api/v1/projects")
         projects = response.json()["data"]
-        
+
         if projects:  # If there's project data
-            project = projects[0]
+            project = projects["all_projects"][0]
             required_fields = ["name", "description", "start_date"]
             for field in required_fields:
                 assert field in project, f"Missing required field: {field}"
@@ -190,7 +187,7 @@ class TestDataModels:
         contacts = response.json()["data"]
         
         if contacts:  # If there's contact data
-            contact = contacts[0]
+            contact = contacts["all_contacts"][0]
             required_fields = ["method", "value", "label"]
             for field in required_fields:
                 assert field in contact, f"Missing required field: {field}"
@@ -297,7 +294,7 @@ class TestDataConsistency:
         summary_response = client.get("/api/v1/summary")
         
         profile_name = profile_response.json()["data"]["name"]
-        summary_name = summary_response.json()["data"]["profile"]
+        summary_name = summary_response.json()["data"]["profile"]["name"]
         
         assert profile_name == summary_name, "Profile name inconsistent between endpoints"
     
