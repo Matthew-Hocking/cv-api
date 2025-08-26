@@ -1,6 +1,7 @@
 from fastapi import APIRouter
 from fastapi.responses import JSONResponse
 from typing import Any
+from datetime import datetime, timezone
 
 from app.services.data_service import data_service
 
@@ -12,8 +13,9 @@ def create_success_response(data: Any, message: str = "Success") -> dict:
     """Create a standardized success response format"""
     return {
         "success": True,
+        "timestamp": datetime.now(timezone.utc).isoformat(),
         "message": message,
-        "data": data
+        "data": data,
     }
 
 
@@ -21,9 +23,10 @@ def create_error_response(message: str, error_code: str = "INTERNAL_ERROR") -> d
     """Create a standardized error response format"""
     return {
         "success": False,
+        "timestamp": datetime.now(timezone.utc).isoformat(),
         "message": message,
         "error_code": error_code,
-        "data": None
+        "data": None,
     }
 
 
@@ -120,6 +123,7 @@ async def get_skills():
         
         response_data = create_success_response(
             data={
+                "all_skills": skills_dict,
                 "skills_by_category": skills_by_category,
                 "total_skills": len(skills_dict),
                 "categories": list(skills_by_category.keys())
@@ -152,6 +156,7 @@ async def get_projects():
         
         response_data = create_success_response(
             data={
+                "all_projects": projects_dict,
                 "current_projects": current_projects,
                 "past_projects": past_projects,
                 "total_projects": len(projects_dict)
