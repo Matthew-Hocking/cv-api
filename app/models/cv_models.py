@@ -1,6 +1,6 @@
 from datetime import date, datetime, timezone
 from typing import List, Optional, Dict, Any
-from pydantic import BaseModel, EmailStr, HttpUrl, Field
+from pydantic import BaseModel, HttpUrl, Field
 from enum import Enum
 
 
@@ -19,12 +19,6 @@ class ContactMethod(str, Enum):
     WEBSITE = "website"
 
 
-# Base response model
-class BaseResponse(BaseModel):
-    success: bool = True
-    timestamp: datetime = Field(default_factory=lambda: datetime.now(timezone.utc))
-
-
 # Profile/Personal Information
 class Profile(BaseModel):
     name: str = Field(..., description="Full name")
@@ -33,10 +27,6 @@ class Profile(BaseModel):
     location: str = Field(..., description="Current location")
     years_experience: int = Field(..., description="Total years of professional experience")
     specialties: List[str] = Field(default=[], description="Key areas of expertise")
-
-
-class ProfileResponse(BaseResponse):
-    data: Profile
 
 
 # Experience/Work History
@@ -53,10 +43,6 @@ class Experience(BaseModel):
     technologies: List[str] = Field(default=[], description="Technologies used")
 
 
-class ExperienceResponse(BaseResponse):
-    data: List[Experience]
-
-
 # Education
 class Education(BaseModel):
     id: str = Field(..., description="Unique identifier")
@@ -70,20 +56,12 @@ class Education(BaseModel):
     achievements: List[str] = Field(default=[], description="Academic achievements, honors")
 
 
-class EducationResponse(BaseResponse):
-    data: List[Education]
-
-
 # Skills
 class Skill(BaseModel):
     name: str = Field(..., description="Skill name")
     level: SkillLevel = Field(..., description="Proficiency level")
     years_experience: int = Field(..., description="Years of experience with this skill")
     category: str = Field(..., description="Skill category (e.g., 'Programming', 'Cloud')")
-
-
-class SkillsResponse(BaseResponse):
-    data: List[Skill]
 
 
 # Projects
@@ -100,10 +78,6 @@ class Project(BaseModel):
     highlights: List[str] = Field(default=[], description="Key project highlights")
 
 
-class ProjectsResponse(BaseResponse):
-    data: List[Project]
-
-
 # Contact Information
 class ContactInfo(BaseModel):
     method: ContactMethod = Field(..., description="Contact method type")
@@ -112,24 +86,12 @@ class ContactInfo(BaseModel):
     primary: bool = Field(default=False, description="Whether this is a primary contact method")
 
 
-class ContactResponse(BaseResponse):
-    data: List[ContactInfo]
-
-
 # Health Check Response
 class HealthResponse(BaseModel):
     status: str
     message: str
     timestamp: datetime = Field(default_factory=lambda: datetime.now(timezone.utc))
     version: str = "1.0.0"
-
-
-# Generic Error Response
-class ErrorResponse(BaseModel):
-    success: bool = False
-    error: str
-    detail: Optional[str] = None
-    timestamp: datetime = Field(default_factory=lambda: datetime.now(timezone.utc))
 
 
 # Admin Models (for later)
